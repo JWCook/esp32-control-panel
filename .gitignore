@@ -1,0 +1,10 @@
+*.db
+build/
+dist/
+.venv
+node_modules/
+package-lock.json
+package.json
+.~*
+.vim/
+.vscode/
