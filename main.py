@@ -37,11 +37,15 @@ pixel3 = NeoPixel(qt_enc3, 6, 1)
 pixel3.brightness = 0.2
 pixel3.fill(0x00FF00)
 
-
 switch_1 = DigitalInOut(board.A0)
 switch_1.direction = Direction.INPUT
 switch_1.pull = Pull.UP
 last_switch_1 = None
+
+button_1a = DigitalInOut(board.D13)
+button_1a.direction = Direction.INPUT
+button_1a.pull = Pull.UP
+last_button_1a = None
 
 
 while True:
@@ -96,3 +100,7 @@ while True:
     if switch_1.value != last_switch_1:
         last_switch_1 = switch_1.value
         print("Switch 1: {}".format(switch_1.value))
+
+    if button_1a.value != last_button_1a:
+        last_button_1a = button_1a.value
+        print("Button 1a: {}".format(button_1a.value))
