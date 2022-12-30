@@ -5,102 +5,120 @@ from adafruit_seesaw.rotaryio import IncrementalEncoder
 from adafruit_seesaw.seesaw import Seesaw
 from digitalio import DigitalInOut, Direction, Pull
 
+
+class InputDevice:
+    def __init__(self, idx):
+        self.idx = idx
+
+    def read(self):
+        raise NotImplementedError
+
+
+class RotaryEncoder(InputDevice):
+    def __init__(self, idx, i2c, address):
+        super().__init__(idx)
+        self.seesaw = Seesaw(i2c, addr=address)
+        self.seesaw.pin_mode(24, self.seesaw.INPUT_PULLUP)
+        self.button = DigitalIO(self.seesaw, 24)
+        self.encoder = IncrementalEncoder(self.seesaw)
+
+        self.pixel = NeoPixel(self.seesaw, 6, 1)
+        self.pixel.brightness = 0.2
+        self.pixel.fill(0x00FF00)
+
+        self.last_position = None
+        self.last_button_value = False
+
+    def read(self):
+        position = -self.encoder.position
+        if position != self.last_position:
+            self.last_position = position
+            print("Rotary {} position: {}".format(self.idx, position))
+
+        button_value = not self.button.value
+        if button_value and not self.last_button_value:
+            self.pixel.brightness = 0.5
+            print("Rotary {} button pressed".format(self.idx))
+        elif self.button.value and self.last_button_value:
+            self.pixel.brightness = 0.2
+            print("Rotary {} button released".format(self.idx))
+        self.last_button_value = button_value
+
+        return position
+
+
+class ToggleSwitch(InputDevice):
+    def __init__(self, idx, pin):
+        super().__init__(idx)
+        self.pin = pin
+        self.pin.direction = Direction.INPUT
+        self.pin.pull = Pull.UP
+        self.last_value = None
+
+    def read(self):
+        value = self.pin.value
+        if value != self.last_value:
+            self.last_value = value
+            print("Switch {}: {}".format(self.idx, value))
+        return value
+
+
+class PushButton(InputDevice):
+    def __init__(self, idx, pin):
+        self.pin = pin
+        self.pin.direction = Direction.INPUT
+        self.pin.pull = Pull.UP
+
+        self.idx = idx
+        self.last_value = False
+
+    def read(self):
+        value = not self.pin.value
+        if value != self.last_value:
+            self.last_value = value
+            print("Button {}: {}".format(self.idx, value))
+        return value
+
+
 i2c = board.STEMMA_I2C()
 
-# qt_enc1 = Seesaw(i2c, addr=0x36)
-# qt_enc1.pin_mode(24, qt_enc1.INPUT_PULLUP)
-# button1 = DigitalIO(qt_enc1, 24)
-# encoder1 = IncrementalEncoder(qt_enc1)
-# last_position1 = None
-# button_held1 = False
-# pixel1 = NeoPixel(qt_enc1, 6, 1)
-# pixel1.brightness = 0.2
-# pixel1.fill(0xFF0000)
+# encoder_1 = RotaryEncoder('rotary 1', i2c, 0x36)
+# encoder_2 = RotaryEncoder('rotary 2', i2c, 0x37)
+encoder_3 = RotaryEncoder(3, i2c, 0x38)
 
-# qt_enc2 = Seesaw(i2c, addr=0x37)
-# qt_enc2.pin_mode(24, qt_enc2.INPUT_PULLUP)
-# button2 = DigitalIO(qt_enc2, 24)
-# encoder2 = IncrementalEncoder(qt_enc2)
-# last_position2 = None
-# button_held2 = False
-# pixel2 = NeoPixel(qt_enc2, 6, 1)
-# pixel2.brightness = 0.2
-# pixel2.fill(0x0000FF)
+switch_1 = ToggleSwitch(1, DigitalInOut(board.A0))
+switch_2 = ToggleSwitch(2, DigitalInOut(board.A1))
+switch_3 = ToggleSwitch(3, DigitalInOut(board.A2))
+switch_4 = ToggleSwitch(4, DigitalInOut(board.A3))
 
-qt_enc3 = Seesaw(i2c, addr=0x38)
-qt_enc3.pin_mode(24, qt_enc3.INPUT_PULLUP)
-button3 = DigitalIO(qt_enc3, 24)
-encoder3 = IncrementalEncoder(qt_enc3)
-last_position3 = None
-button_held3 = False
-pixel3 = NeoPixel(qt_enc3, 6, 1)
-pixel3.brightness = 0.2
-pixel3.fill(0x00FF00)
+button_1 = PushButton(1, DigitalInOut(board.D13))
+button_2 = PushButton(2, DigitalInOut(board.D12))
+button_3 = PushButton(3, DigitalInOut(board.D27))
+button_4 = PushButton(4, DigitalInOut(board.D33))
+button_5 = PushButton(5, DigitalInOut(board.D15))
+button_6 = PushButton(6, DigitalInOut(board.D32))
+button_7 = PushButton(7, DigitalInOut(board.D14))
+button_8 = PushButton(8, DigitalInOut(board.A4))
 
-switch_1 = DigitalInOut(board.A0)
-switch_1.direction = Direction.INPUT
-switch_1.pull = Pull.UP
-last_switch_1 = None
-
-button_1a = DigitalInOut(board.D13)
-button_1a.direction = Direction.INPUT
-button_1a.pull = Pull.UP
-last_button_1a = None
+devices = [
+    # encoder_1,
+    # encoder_2,
+    encoder_3,
+    switch_1,
+    switch_2,
+    switch_3,
+    switch_4,
+    button_1,
+    button_2,
+    button_3,
+    button_4,
+    button_5,
+    button_6,
+    button_7,
+    button_8,
+]
 
 
 while True:
-
-    # negate the position to make clockwise rotation positive
-    # position1 = -encoder1.position
-    # position2 = -encoder2.position
-    position3 = -encoder3.position
-
-    # if position1 != last_position1:
-    #     last_position1 = position1
-    #     print("Position 1: {}".format(position1))
-
-    # if not button1.value and not button_held1:
-    #     button_held1 = True
-    #     pixel1.brightness = 0.5
-    #     print("Button 1 pressed")
-
-    # if button1.value and button_held1:
-    #     button_held1 = False
-    #     pixel1.brightness = 0.2
-    #     print("Button 1 released")
-
-    # if position2 != last_position2:
-    #     last_position2 = position2
-    #     print("Position 2: {}".format(position2))
-
-    # if not button2.value and not button_held2:
-    #     button_held2 = True
-    #     pixel2.brightness = 0.5
-    #     print("Button 2 pressed")
-
-    # if button2.value and button_held2:
-    #     button_held2 = False
-    #     pixel2.brightness = 0.2
-    #     print("Button 2 released")
-
-    if position3 != last_position3:
-        last_position3 = position3
-        print("Position 3: {}".format(position3))
-
-    if not button3.value and not button_held3:
-        button_held3 = True
-        pixel3.brightness = 0.5
-        print("Button 3 pressed")
-
-    if button3.value and button_held3:
-        button_held3 = False
-        pixel3.brightness = 0.2
-        print("Button 3 released")
-
-    if switch_1.value != last_switch_1:
-        last_switch_1 = switch_1.value
-        print("Switch 1: {}".format(switch_1.value))
-
-    if button_1a.value != last_button_1a:
-        last_button_1a = button_1a.value
-        print("Button 1a: {}".format(button_1a.value))
+    for device in devices:
+        device.read()
