@@ -142,21 +142,41 @@ devices = [
     # encoder_1,
     # encoder_2,
     # encoder_3,
-    switch_1,
-    switch_2,
-    switch_3,
-    switch_4,
+    # switch_1,
+    # switch_2,
+    # switch_3,
+    # switch_4,
     button_1,
-    button_2,
-    button_3,
-    button_4,
-    button_5,
-    button_6,
-    button_7,
-    button_8,
+    # button_2,
+    # button_3,
+    # button_4,
+    # button_5,
+    # button_6,
+    # button_7,
+    # button_8,
 ]
 
 
 while True:
     for device in devices:
         device.read()
+
+# import pwmio
+# red_led = pwmio.PWMOut(board.A5, frequency=5000, duty_cycle=65535)
+# red_led = pwmio.PWMOut(board.A5, frequency=5000, duty_cycle=0)
+print(red_led)
+
+# while True:
+#    red_led.duty_cycle = 65535
+#    sleep(1)
+#    red_led.duty_cycle = 0
+#    sleep(1)
+
+# while True:
+#    for i in range(100):
+#        # PWM LED up and down
+#        if i < 50:
+#            red_led.duty_cycle = int(i * 2 * 65535 / 100)  # Up
+#        else:
+#            red_led.duty_cycle = 65535 - int((i - 50) * 2 * 65535 / 100)  # Down
+#        sleep(0.01)
