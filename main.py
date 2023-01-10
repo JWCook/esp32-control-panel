@@ -1,9 +1,12 @@
+from time import sleep
+
 import board
 from adafruit_seesaw.digitalio import DigitalIO
-from adafruit_seesaw.neopixel import NeoPixel
+from adafruit_seesaw.neopixel import NeoPixel as SSNeoPixel
 from adafruit_seesaw.rotaryio import IncrementalEncoder
 from adafruit_seesaw.seesaw import Seesaw
 from digitalio import DigitalInOut, Direction, Pull
+from neopixel import NeoPixel
 
 
 class InputDevice:
@@ -22,7 +25,7 @@ class RotaryEncoder(InputDevice):
         self.button = DigitalIO(self.seesaw, 24)
         self.encoder = IncrementalEncoder(self.seesaw)
 
-        self.pixel = NeoPixel(self.seesaw, 6, 1)
+        self.pixel = SSNeoPixel(self.seesaw, 6, 1)
         self.pixel.brightness = 0.2
         self.pixel.fill(0x00FF00)
 
@@ -50,13 +53,13 @@ class RotaryEncoder(InputDevice):
 class ToggleSwitch(InputDevice):
     def __init__(self, idx, pin):
         super().__init__(idx)
-        self.pin = pin
-        self.pin.direction = Direction.INPUT
-        self.pin.pull = Pull.UP
+        self.io = DigitalInOut(pin)
+        self.io.direction = Direction.INPUT
+        self.io.pull = Pull.UP
         self.last_value = None
 
     def read(self):
-        value = self.pin.value
+        value = self.io.value
         if value != self.last_value:
             self.last_value = value
             print("Switch {}: {}".format(self.idx, value))
@@ -65,45 +68,80 @@ class ToggleSwitch(InputDevice):
 
 class PushButton(InputDevice):
     def __init__(self, idx, pin):
-        self.pin = pin
-        self.pin.direction = Direction.INPUT
-        self.pin.pull = Pull.UP
+        self.io = DigitalInOut(pin)
+        self.io.direction = Direction.INPUT
+        self.io.pull = Pull.UP
 
         self.idx = idx
         self.last_value = False
 
     def read(self):
-        value = not self.pin.value
+        value = not self.io.value
         if value != self.last_value:
             self.last_value = value
             print("Button {}: {}".format(self.idx, value))
         return value
 
 
-i2c = board.STEMMA_I2C()
+class RGBPushButton(PushButton):
+    def __init__(self, idx, pin, r_pin, g_pin, b_pin):
+        super().__init__(idx, pin)
+
+        self.red_led = DigitalInOut(r_pin)
+        self.red_led.switch_to_output()
+
+        self.grn_led = DigitalInOut(g_pin)
+        self.grn_led.switch_to_output()
+
+        self.blu_led = DigitalInOut(b_pin)
+        self.blu_led.switch_to_output()
+
+    def set_color(self, r=False, g=False, b=False):
+        print(f'RGBPushButton {self.idx} set_color: r={r}, g={g}, b={b}')
+        # Pull-down is on, so we invert the value
+        self.red_led.value = not r
+        self.grn_led.value = not g
+        self.blu_led.value = not b
+
+
+print(dir(board))
+board_pixels = NeoPixel(board.NEOPIXEL, 1)
+board_pixels.fill((10, 10, 0))
+# i2c = board.STEMMA_I2C()
 
 # encoder_1 = RotaryEncoder('rotary 1', i2c, 0x36)
 # encoder_2 = RotaryEncoder('rotary 2', i2c, 0x37)
-encoder_3 = RotaryEncoder(3, i2c, 0x38)
+# encoder_3 = RotaryEncoder(3, i2c, 0x38)
 
-switch_1 = ToggleSwitch(1, DigitalInOut(board.A0))
-switch_2 = ToggleSwitch(2, DigitalInOut(board.A1))
-switch_3 = ToggleSwitch(3, DigitalInOut(board.A2))
-switch_4 = ToggleSwitch(4, DigitalInOut(board.A3))
+switch_1 = ToggleSwitch(1, board.A0)
+switch_2 = ToggleSwitch(2, board.A1)
+switch_3 = ToggleSwitch(3, board.A2)
+switch_4 = ToggleSwitch(4, board.A3)
 
-button_1 = PushButton(1, DigitalInOut(board.D13))
-button_2 = PushButton(2, DigitalInOut(board.D12))
-button_3 = PushButton(3, DigitalInOut(board.D27))
-button_4 = PushButton(4, DigitalInOut(board.D33))
-button_5 = PushButton(5, DigitalInOut(board.D15))
-button_6 = PushButton(6, DigitalInOut(board.D32))
-button_7 = PushButton(7, DigitalInOut(board.D14))
-button_8 = PushButton(8, DigitalInOut(board.A4))
+# button_1 = RGBPushButton(1, board.D13, board.TX, board.MISO, board.MOSI)
+button_1 = RGBPushButton(1, board.D13, board.D12, board.D27, board.D33)
+# button_2 = PushButton(2, board.D12)
+# button_3 = PushButton(3, board.D27)
+# button_4 = PushButton(4, board.D33)
+button_5 = PushButton(5, board.D15)
+button_6 = PushButton(6, board.D32)
+button_7 = PushButton(7, board.D14)
+button_8 = PushButton(8, board.A4)
+
+board_pixels.fill((0, 10, 0))
+
+while True:
+    button_1.set_color(r=True)
+    sleep(1)
+    button_1.set_color(g=True)
+    sleep(1)
+    button_1.set_color(b=True)
+    sleep(1)
 
 devices = [
     # encoder_1,
     # encoder_2,
-    encoder_3,
+    # encoder_3,
     switch_1,
     switch_2,
     switch_3,
