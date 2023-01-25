@@ -277,21 +277,21 @@ A2.150,2.150 0 1,0 190.311,5.550
 " 
 fill="#ffffff" fill-opacity="1.000000" vector-effect="non-scaling-stroke" stroke="#000000" stroke-width="0.100mm" stroke-opacity="1.000000" fpd:visible="front back" fpd:print_element="0" />
 <path d="
-M23.695 22.494
-A3.250,3.250 0 1,0 30.195,22.494
-A3.250,3.250 0 1,0 23.695,22.494
+M23.445 22.494
+A3.500,3.500 0 1,0 30.445,22.494
+A3.500,3.500 0 1,0 23.445,22.494
 " 
 fill="#ffffff" fill-opacity="1.000000" vector-effect="non-scaling-stroke" stroke="#000000" stroke-width="0.100mm" stroke-opacity="1.000000" fpd:visible="front back" fpd:print_element="0" />
 <path d="
-M23.695 96.494
-A3.250,3.250 0 1,0 30.195,96.494
-A3.250,3.250 0 1,0 23.695,96.494
+M23.445 96.494
+A3.500,3.500 0 1,0 30.445,96.494
+A3.500,3.500 0 1,0 23.445,96.494
 " 
 fill="#ffffff" fill-opacity="1.000000" vector-effect="non-scaling-stroke" stroke="#000000" stroke-width="0.100mm" stroke-opacity="1.000000" fpd:visible="front back" fpd:print_element="0" />
 <path d="
-M23.695 59.494
-A3.250,3.250 0 1,0 30.195,59.494
-A3.250,3.250 0 1,0 23.695,59.494
+M23.445 59.494
+A3.500,3.500 0 1,0 30.445,59.494
+A3.500,3.500 0 1,0 23.445,59.494
 " 
 fill="#ffffff" fill-opacity="1.000000" vector-effect="non-scaling-stroke" stroke="#000000" stroke-width="0.100mm" stroke-opacity="1.000000" fpd:visible="front back" fpd:print_element="0" />
 <path d="
