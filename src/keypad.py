@@ -18,9 +18,14 @@ from neopixel import NeoPixel
 # ROW_PINS = (board.D12, board.D33, board.D32)
 # COL_PINS = (board.D13, board.D27, board.D15, board.D14)
 # Switched a pair of pins, whoops
-ROW_PINS = (board.D27, board.D33, board.D32)
-COL_PINS = (board.D12, board.D13, board.D15, board.D14)
-KEYS = ((1, 2, 3, "A"), (4, 5, 6, "B"), (7, 8, 9, "C"))
+# ROW_PINS = (board.D27, board.D33, board.D32)
+# COL_PINS = (board.D12, board.D13, board.D15, board.D14)
+# KEYS = ((1, 2, 3, "A"), (4, 5, 6, "B"), (7, 8, 9, "C"))
+
+
+ROW_PINS = (board.IO38, board.IO33)
+COL_PINS = (board.IO1, board.IO3)
+KEYS = ((1, 2), (4, 5))
 
 board_pixels = NeoPixel(board.NEOPIXEL, 1)
 board_pixels.fill((10, 10, 10))
