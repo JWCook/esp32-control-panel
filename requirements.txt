@@ -1,0 +1,11 @@
+# Packages for local development
+adafruit-blinka>=8.0
+adafruit-circuitpython-bitmap-font
+adafruit-circuitpython-display-text
+adafruit-circuitpython-matrixkeypad
+adafruit-circuitpython-neopixel
+adafruit-circuitpython-seesaw
+adafruit-circuitpython-ssd1327
+adafruit-circuitpython-st7789
+adafruit-seesaw
+types-circuitpython>=8.0.0b0
