@@ -7,6 +7,7 @@ import board
 from adafruit_matrixkeypad import Matrix_Keypad
 from digitalio import DigitalInOut
 from neopixel import NeoPixel
+import adafruit_pcf8575
 
 # COLUMNS = 5
 # ROWS = 5
@@ -30,19 +31,56 @@ KEYS = ((1, 2), (4, 5))
 board_pixels = NeoPixel(board.NEOPIXEL, 1)
 board_pixels.fill((10, 10, 10))
 
+i2c = board.I2C()  # uses board.SCL and board.SDA
+# i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector
+expander = adafruit_pcf8575.PCF8575(i2c)
+
+EXP_ROW_PINS = (15, 13, 11, 9, 1)
+EXP_COL_PINS = (14, 12, 10, 8, 0)
+
+EXP_KEYS = (
+    (1, 2, 3, 4, 5),
+    (6, 7, 8, 9, 0),
+    ('A', 'B', 'C', 'D', 'E'),
+    ('F', 'G', 'H', 'I', 'J'),
+    ('K', 'L', 'M', 'N', 'O'),
+)
+# get a 'digitalio' like pin from the pcf
+# led = expander.get_pin(8)
+# button = expander.get_pin(0)
+
+# # Setup pin7 as an output that's at a high logic level default
+# led.switch_to_output(value=True)
+# # Setup pin0 as an output that's got a pullup
+# button.switch_to_input(pull=digitalio.Pull.UP)
+# while True:
+#     led.value = button.value
+#     time.sleep(0.01)  # debounce
+
+
 # key_pixels = NeoPixel(board.D5, 30, brightness=0.1)
 # key_pixels.fill(WHITE)
-
 # keys = KeyMatrix(
 #     row_pins=ROW_PINS,
 #     column_pins=COL_PINS,
 #     columns_to_anodes=False,
 # )
 
+# Pins on the MCU board
+# keypad = Matrix_Keypad(
+#     [DigitalInOut(pin) for pin in ROW_PINS],
+#     [DigitalInOut(pin) for pin in COL_PINS],
+#     KEYS,
+# )
+
+# Pins on the expansion board
+out_pins = [expander.get_pin(pin) for pin in COL_PINS]
+for pin in out_pins:
+    pin.switch_to_output(value=True)
 keypad = Matrix_Keypad(
-    [DigitalInOut(pin) for pin in ROW_PINS],
-    [DigitalInOut(pin) for pin in COL_PINS],
-    KEYS,
+    [expander.get_pin(pin) for pin in ROW_PINS],
+    out_pins,
+    EXP_KEYS,
 )
 
 while True:
