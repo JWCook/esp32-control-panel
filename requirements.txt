@@ -3,6 +3,7 @@ adafruit-blinka>=8.0
 adafruit-circuitpython-bitmap-font
 adafruit-circuitpython-display-text
 adafruit-circuitpython-matrixkeypad
+adafruit-circuitpython-mcp230xx
 adafruit-circuitpython-neopixel
 adafruit-circuitpython-seesaw
 adafruit-circuitpython-ssd1327

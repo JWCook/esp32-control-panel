@@ -4,7 +4,7 @@
 # **Note:** Requires setting $ESP32_PASS environment variable
 
 # Get device info
-curl -v -u :$ESP32_PASS -L 'http://cpy-240348.local/cp/version.json' | jq
+curl -v -u :$ESP32_PASS -L 'http://circuitpython.local/cp/version.json' | jq
 
 # List libraries
 # curl -v -u :$ESP32_PASS -H "Accept: application/json" -L --location-trusted http://circuitpython.local/fs/lib/ | jq
